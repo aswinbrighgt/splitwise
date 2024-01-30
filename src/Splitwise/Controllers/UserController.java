@@ -1,8 +1,11 @@
 package Splitwise.Controllers;
 
 import Splitwise.Dtos.CreateUserRequestDto;
+import Splitwise.Dtos.Transaction;
 import Splitwise.Models.User;
 import Splitwise.Services.UserServices;
+
+import java.util.List;
 
 public class UserController {
     private UserServices userServices;
@@ -20,5 +23,14 @@ public class UserController {
 
     public void updatePassword(String name, String password) {
         userServices.updatePassword(name,password);
+    }
+
+    public List<Transaction> settleupUserGroup(String user, String group) {
+        return userServices.settleupUserGroup(user,group);
+    }
+
+    public List<Transaction> SettleupUser(String user) {
+        return userServices.settleupUser(user);
+
     }
 }

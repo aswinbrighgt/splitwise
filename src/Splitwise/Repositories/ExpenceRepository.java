@@ -10,6 +10,14 @@ public class ExpenceRepository {
     List<Expense> expenses;
     List<UserExpense> userExpenses;
 
+    public List<UserExpense> getUserExpenses() {
+        return userExpenses;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
     public ExpenceRepository() {
         this.expenses=new ArrayList<>();
         this.userExpenses=new ArrayList<>();
@@ -36,5 +44,13 @@ public class ExpenceRepository {
             if(desc.equals(expense.getDescription())) return expense;
         }
         return null;
+    }
+
+    public List<UserExpense> getUserExpenses(Expense expense) {
+        List<UserExpense> userExpenseList = new ArrayList<>();
+        for(UserExpense userExpense:userExpenses){
+            if(userExpense.getExpense().equals(expense)) userExpenseList.add(userExpense);
+        }
+        return userExpenseList;
     }
 }

@@ -9,6 +9,7 @@ public class Group {
     private List<User> users;
 
     public Group(User user,String name) {
+        Expenses=new ArrayList<>();
         users=new ArrayList<>();
         users.add(user);
         Name = name;

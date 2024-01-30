@@ -1,14 +1,12 @@
 package Splitwise.Services;
 
-import Splitwise.Models.Expense;
-import Splitwise.Models.Group;
-import Splitwise.Models.User;
-import Splitwise.Models.UserExpense;
+import Splitwise.Models.*;
 import Splitwise.Repositories.ExpenceRepository;
 import Splitwise.Repositories.GroupRepository;
 import Splitwise.Repositories.UserRepository;
 import Splitwise.Stratagies.ExpenceCreator;
-import Splitwise.Stratagies.ExpenseCreatorFactory;
+import Splitwise.Stratagies.hadtopayCreator;
+import Splitwise.Stratagies.paidbyCreator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +25,12 @@ public class ExpenceServices {
     public void createExpense(String input) {
         String[] in=input.split(" ");
         Expense expense=new Expense();
+        expense.setExpenseType(ExpenseType.NORMAL);
         expense.setDescription(getDescription(in));
         Group group = groupRepository.getGroupbyName(in[2]);
         List<User> users=new ArrayList<>();
         int pointer=2;
-        if(group==null){
+        if(group == null){
             users.add(userRepository.getUserbyName(in[0]));
             while(userRepository.getUserbyName(in[pointer])!=null){
                 users.add(userRepository.getUserbyName(in[pointer]));
@@ -40,9 +39,10 @@ public class ExpenceServices {
         }
         else{
             users=group.getUsers();
+            group.getExpenses().add(expense);
         }
         if(pointer==2) pointer++;
-        ExpenceCreator expenceCreator= ExpenseCreatorFactory.create(in[pointer]);
+        ExpenceCreator expenceCreator= paidbyCreator.create(in[pointer]);
         pointer++;
         int amount=0;
         List<Integer> values=new ArrayList<>();
@@ -55,10 +55,23 @@ public class ExpenceServices {
         }
         expense.setAmount(amount);
         List<UserExpense> userExpenses=expenceCreator.createExpense(users,values,expense);
-        for(UserExpense userExpense:userExpenses){
+        saveexpense(userExpenses, expense);
+        expenceCreator= hadtopayCreator.create(in[pointer]);
+        pointer++;
+        if(values.size()>1) values=new ArrayList<>();
+        while(!in[pointer].equals("Desc")){
+            values.add(Integer.parseInt(in[pointer]));
+            pointer++;
+        }
+        userExpenses=expenceCreator.createExpense(users,values,expense);
+        saveexpense(userExpenses,expense);
+        expenceRepository.addexpenses(expense);
+    }
+
+    private void saveexpense(List<UserExpense> userExpenses, Expense expense) {
+        for(UserExpense userExpense: userExpenses){
             expenceRepository.adduserExpenses(userExpense);
         }
-        expenceRepository.addexpenses(expense);
     }
 
     private static String getDescription(String[] in) {

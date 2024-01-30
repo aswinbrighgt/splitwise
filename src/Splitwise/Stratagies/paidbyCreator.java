@@ -1,6 +1,6 @@
 package Splitwise.Stratagies;
 
-public class ExpenseCreatorFactory {
+public class paidbyCreator {
 
     static ExpenceCreator single=new singlepay();
     static ExpenceCreator multi=new multipay();
