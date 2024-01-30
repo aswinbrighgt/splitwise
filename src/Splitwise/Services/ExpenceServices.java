@@ -25,15 +25,9 @@ public class ExpenceServices {
     }
 
     public void createExpense(String input) {
-       String[] in=input.split(" ");
-       int length=in.length-1;
-       String Description="";
-       while(!in[length].equals("Desc")){
-           Description=in[length]+Description;
-           length--;
-       }
+        String[] in=input.split(" ");
         Expense expense=new Expense();
-       expense.setDescription(Description);
+        expense.setDescription(getDescription(in));
         Group group = groupRepository.getGroupbyName(in[2]);
         List<User> users=new ArrayList<>();
         int pointer=2;
@@ -66,4 +60,15 @@ public class ExpenceServices {
         }
         expenceRepository.addexpenses(expense);
     }
+
+    private static String getDescription(String[] in) {
+        int length= in.length-1;
+        String Description="";
+        while(!in[length].equals("Desc")){
+            Description= in[length]+Description;
+            length--;
+        }
+        return Description;
+    }
+
 }
